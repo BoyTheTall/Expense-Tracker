@@ -1,7 +1,9 @@
 #include "ui.hpp"
 
 console_ui::console_ui(){
+    this->ts = Transaction_Services();
     this->main_menu();
+    
 }
 
 //private function that will clear the console. due to different platforoms it will have code to cler consoles of windomws, linux or mac. for now itll be windows only
@@ -84,6 +86,7 @@ void console_ui::main_menu(){
         std::cout << "Main Menu:\n";
         std::cout <<"1.Add Transaction\n";
         std::cout <<"99.exit application\n";
+        std::cout << "100. Zhong Xina\n";
         std::cout << "Enter the desired option: ";
 
         int option;
@@ -95,6 +98,9 @@ void console_ui::main_menu(){
             
             case 99:
                 exit = 1;
+                break;
+            case 100:
+                std::cout << this->zhong;
                 break;
         }
     }
