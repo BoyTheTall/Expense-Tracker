@@ -76,7 +76,8 @@ void console_ui::add_transaction_ui(){
         }
 
     }
-    main_menu();
+    //breaking the loop returns to the main menu
+    this->clear_scr();
 }
 
 void console_ui::main_menu(){
