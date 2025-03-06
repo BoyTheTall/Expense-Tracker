@@ -13,15 +13,6 @@ Transaction::Transaction(string t_id, std::string n_date, std::string n_category
     this ->is_expense = n_is_expense;
 
 }
-Transaction::Transaction(int64_t t_id, std::string n_date, std::string n_category, double n_amount, bool n_is_expense)
-{
-    this ->transaction_id = to_string(t_id);
-    this ->date = n_date;
-    this ->category = n_category;
-    this ->amount = n_amount;
-    this ->is_expense = n_is_expense;
-
-}
 
 Transaction::Transaction(){
     this ->transaction_id = 122;
