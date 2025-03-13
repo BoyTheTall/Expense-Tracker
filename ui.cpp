@@ -63,6 +63,8 @@ void console_ui::add_transaction_ui(){
                     }
 
                     }
+                    Transaction t(generate_id(), date, category, amount, isExpense);
+
                 }
             }
         std::cout <<"Enter the amount: ";

@@ -182,4 +182,9 @@ Transaction_Services::~Transaction_Services(){
         sqlite3_close(this->db);
 }
 
-
+std::string generate_id(){
+    srand(time(0));
+    int id = rand() + time(0);
+    std::string transaction_id = to_string(id);
+    return transaction_id;
+}

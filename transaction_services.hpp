@@ -28,3 +28,4 @@ public:
     void delete_transaction(Transaction t);
     ~Transaction_Services();
 };
+std::string generate_id();
