@@ -160,7 +160,7 @@ void console_ui::main_menu(){
                 std::cout << this->zhong;
                 break;
             case 3:
-                vector<Transaction> transactions = this->ts.getAllExpenses();
+                std::vector<Transaction> transactions = this->ts.getAllExpenses();
                 for(int i = 0; i < transactions.size(); i++)
                     std::cout << transactions[i].toString();
                
