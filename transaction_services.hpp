@@ -26,6 +26,8 @@ public:
     vector<Transaction> getExpenses();
     void update_transaction(Transaction t);
     void delete_transaction(Transaction t);
+    void execute_sql(string sql, string error_msg, string success_msg);
     ~Transaction_Services();
+
 };
 std::string generate_id();

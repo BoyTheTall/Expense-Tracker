@@ -26,6 +26,7 @@ class console_ui{
         console_ui();
         void add_transaction_ui();
         void main_menu();
+        void view_transactions();
 
 
 };

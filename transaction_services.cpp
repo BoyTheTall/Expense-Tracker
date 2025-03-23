@@ -2,7 +2,7 @@
 #include <iostream>
 #include "sqlite3.h"
 #include <stdint.h>
-using namespace std;
+
 
 //constructor that just connects to the database when the object is created
 Transaction_Services::Transaction_Services(){
@@ -14,11 +14,11 @@ void Transaction_Services::connect() {
 
     this->connection_established = sqlite3_open(this->directory, &this->db);
     if (connection_established != SQLITE_OK) {
-        cerr << "Can't open the database: " << sqlite3_errmsg(db) << "\n";
+        std::cerr << "Can't open the database: " << sqlite3_errmsg(db) << "\n";
         this->is_connected = false;
     }
     else {
-        cout << "Database opened successfully" << "\n";
+        std::cout << "Database opened successfully" << "\n";
         this->is_connected = true;
     }
 
@@ -32,7 +32,7 @@ vector<Transaction> Transaction_Services::getTransactionByType(bool transaction_
     string sql = "SELECT * FROM tblTransactions WHERE Transaction_Type = " + to_string(transaction_type);
     int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
     if(exit_code != SQLITE_OK){
-        cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
+        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
     }else{
         t_list = this->traverse_result_set(stmt);
     }
@@ -110,7 +110,7 @@ vector<Transaction> Transaction_Services::getTransactions(int64_t t_id, string d
 
     int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
     if(exit_code != SQLITE_OK){
-        cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
+        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
     }else{
         t_list = this->traverse_result_set(stmt);
     }
@@ -122,11 +122,13 @@ vector<Transaction> Transaction_Services::getTransactions(int64_t t_id, string d
 vector<Transaction> Transaction_Services::getTransactionsByMonthOrYear(string month_or_year){
     string sql = "SELECT * FROM tblTransactions WHERE Date LIKE \"%" + month_or_year + "%\"";
     vector<Transaction> t_list;
+
+
     sqlite3_stmt* stmt;
 
     int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
     if(exit_code != SQLITE_OK){
-        cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
+        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
     }else{
         t_list = this->traverse_result_set(stmt);
     }
@@ -145,36 +147,41 @@ void Transaction_Services::update_transaction(Transaction t){
     string sql = "UPDATE tblTransactions SET Amount = " + to_string(t.getAmount())
     + ", Category = \"" + t.getCategory() + "\", Transaction_Type = "+ to_string(t.getTransactionType()) +
     ", Date = \"" + t.getDate() + "\" WHERE transaction_id = " + t.getTransactionID();
-
-    sqlite3_stmt* stmt;
-    int exit_code = sqlite3_exec(this->db, sql.c_str(), 0, &stmt, nullptr);
-
-    if(exit_code != SQLITE_OK){
-        cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
-    }
-    else{
-        cout << "Update Successful" << "\n";
-    }
+    string error_msg = "Failed to update transaction: ";
+    string success_msg = "Transaction updated successfully";
+    this->execute_sql(sql, error_msg, success_msg);
 }
 
 void Transaction_Services::delete_transaction(Transaction t){
     string sql = "DELETE FROM tblTransactions WHERE transaction_id = " + t.getTransactionID();
+    string error_msg = "Failed to remove transaction: ";
+    string succes_msg = "Transaction removed successfully";
+    this->execute_sql(sql, error_msg, succes_msg);
+}
+//insertion methods
+void Transaction_Services::add_transaction(Transaction t){
+    string sql = "INSERT INTO tblTransactions (transaction_id, Amount, Category, Transaction_Type, Date) VALUES (" + t.getTransactionID() +  ", " + to_string(t.getAmount()) +
+                ", \"" + t.getCategory() + "\", " + to_string(t.getTransactionType()) + ", \"" + t.getDate() + "\")";
+    string error_msg = "Failed to add transaction into database: ";
+    string success_msg = "Transaction added successfully";
+    this->execute_sql(sql, error_msg, success_msg);
+}
+
+//utility functions
+
+//this function is only used where the is no return variable that will be needed
+void Transaction_Services::execute_sql(string sql, string error_msg, string success_msg){
     sqlite3_stmt* stmt;
     int exit_code = sqlite3_exec(this->db, sql.c_str(), 0, &stmt, nullptr);
 
     if(exit_code != SQLITE_OK){
-        cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
+        std::cerr << error_msg << sqlite3_errmsg(this->db) << "\n";
     }
     else{
-        cout << "Removal of transaction Successful" << "\n";
+        std::cout << success_msg << "\n";
     }
+    sqlite3_finalize(stmt);
 }
-//insertion methods
-void Transaction_Services::add_transaction(Transaction t){
-
-
-}
-
 //deconstructor
 Transaction_Services::~Transaction_Services(){
 
@@ -182,9 +189,9 @@ Transaction_Services::~Transaction_Services(){
         sqlite3_close(this->db);
 }
 
-std::string generate_id(){
+string generate_id(){
     srand(time(0));
     int id = rand() + time(0);
-    std::string transaction_id = to_string(id);
+    string transaction_id = to_string(id);
     return transaction_id;
 }
