@@ -12,6 +12,8 @@ private:
     void connect();
     std::vector<Transaction> traverse_result_set(sqlite3_stmt* stmt);
     std::vector<Transaction> getTransactionByType(bool transaction_type);
+    void execute_sql(std::string sql, std::string error_msg, std::string success_msg);
+    std::vector<Transaction> execute_fetch_sql(std::string sql);
 
 public:
     std::string str_default_value = std::to_string(0);
@@ -26,7 +28,6 @@ public:
     std::vector<Transaction> getExpenses();
     void update_transaction(Transaction t);
     void delete_transaction(Transaction t);
-    void execute_sql(std::string sql, std::string error_msg, std::string success_msg);
     ~Transaction_Services();
 
 };

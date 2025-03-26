@@ -27,16 +27,8 @@ void Transaction_Services::connect() {
 //fetching functions
 //this function gets all transactions of the specified type. it will be hidden from view and will be used by public facing functions. I could not really use the other functions with it because well i can't set a default value that makes sense
 std::vector<Transaction> Transaction_Services::getTransactionByType(bool transaction_type){
-    sqlite3_stmt* stmt;
-    std::vector<Transaction> t_list;
     std::string sql = "SELECT * FROM tblTransactions WHERE Transaction_Type = " + std::to_string(transaction_type);
-    int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
-    if(exit_code != SQLITE_OK){
-        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
-    }else{
-        t_list = this->traverse_result_set(stmt);
-    }
-
+    std::vector<Transaction> t_list = this->execute_fetch_sql(sql);
     return t_list;
     }
 
@@ -63,7 +55,6 @@ std::vector<Transaction> Transaction_Services::traverse_result_set(sqlite3_stmt*
 //this can be made used to search for any combinations of the parameters listed. beats having to write the multiple variations. this can only be used for specific date searches or other date search types (mm, yyyy, dd, dd/mm, mm/yyyy but not dd/yyyy)
 //the change i made to this function has made the getTransactionsByMonthOrYear obsolete before the gui even came on, won't use it if i only want to use the date
 std::vector<Transaction> Transaction_Services::getTransactions(int64_t t_id, std::string date, std::string category, double amount){
-    sqlite3_stmt* stmt;
     std::vector<Transaction> t_list;
     bool parameter_added = false;
     std::string sql = "SELECT * FROM tblTransactions";
@@ -107,32 +98,14 @@ std::vector<Transaction> Transaction_Services::getTransactions(int64_t t_id, std
             sql = sql + " AND amount = " + std::to_string(amount);
         }
     }
-
-    int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
-    if(exit_code != SQLITE_OK){
-        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
-    }else{
-        t_list = this->traverse_result_set(stmt);
-    }
-    sqlite3_finalize(stmt);
+    t_list = this->execute_fetch_sql(sql);
     return t_list;
 }
 
 //the parameter can be a month or year it will work the same, can be mm/yyyy, mm, yyyy, will be used only if other parameters wont be needed
 std::vector<Transaction> Transaction_Services::getTransactionsByMonthOrYear(std::string month_or_year){
     std::string sql = "SELECT * FROM tblTransactions WHERE Date LIKE \"%" + month_or_year + "%\"";
-    std::vector<Transaction> t_list;
-
-
-    sqlite3_stmt* stmt;
-
-    int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
-    if(exit_code != SQLITE_OK){
-        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
-    }else{
-        t_list = this->traverse_result_set(stmt);
-    }
-    sqlite3_finalize(stmt);
+    std::vector<Transaction> t_list = this->execute_fetch_sql(sql);
     return t_list;
 }
 
@@ -182,6 +155,20 @@ void Transaction_Services::execute_sql(std::string sql, std::string error_msg, s
     }
     sqlite3_finalize(stmt);
 }
+
+std::vector<Transaction> Transaction_Services::execute_fetch_sql(std::string sql){
+    sqlite3_stmt* stmt;
+    std::vector<Transaction> transaction_list;
+    int exit_code = sqlite3_prepare_v2(this->db, sql.c_str(), -1, &stmt, nullptr);
+    if(exit_code != SQLITE_OK){
+        std::cerr << "Failed to prepare statement " << sqlite3_errmsg(this->db) << "\n";
+    }else{
+        transaction_list = this->traverse_result_set(stmt);
+    }
+    sqlite3_finalize(stmt);
+    return transaction_list;
+}
+
 //deconstructor
 Transaction_Services::~Transaction_Services(){
 
