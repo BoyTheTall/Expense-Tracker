@@ -18,7 +18,7 @@
         {
             "type": "cppbuild",
             "label": "C/C++: g++.exe build mingw64",
-            "command": "C:/winlibs-x86_64-posix-seh-gcc-13.2.0-llvm-18.1.5-mingw-w64ucrt-11.0.1-r8/mingw64/bin/g++.exe",
+            "command": "C:/msys64/ucrt64/bin/g++.exe",
             "args": [
                 "-fdiagnostics-color=always",
                 "-g",
@@ -28,11 +28,11 @@
                 "-I",
                 "${workspaceFolder}",
                 "-L",
-                "C:/Users/Doctor/Documents/cpp_libraries/sqlite/64bit precompiled",
+                "C:/msys64/ucrt64/lib/sqlite3.50.1",
                 "-lsqlite3"
             ],
             "options": {
-                "cwd": "C:/winlibs-x86_64-posix-seh-gcc-13.2.0-llvm-18.1.5-mingw-w64ucrt-11.0.1-r8/mingw64/bin"
+                "cwd": "C:/msys64/ucrt64/bin"
             },
             "problemMatcher": [
                 "$gcc"

@@ -1,12 +1,12 @@
 #include "Transaction.hpp"
-#include "sqlite3.h"
 #include <vector>
 #include <stdint.h>
 #include <string>
+#include <sqlite3.h>
 
 class Transaction_Services{
 private:
-    const char* directory = "C:\\Users\\Doctor\\Documents\\C C++ projects\\expenses tracker\\transactions.db";
+    const char* directory = "transactions.db";
     sqlite3* db;
     int connection_established;//this is for checking if the connection was established
     void connect();
